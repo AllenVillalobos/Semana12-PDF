@@ -5,6 +5,7 @@ using OfficeOpenXml;
 using Semana12.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -84,8 +85,15 @@ namespace Semana12.Paginas
                 }
                 Response.Clear();
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.AppendHeader("Content-Disposition", "attachment; filename=Reporte.xlsx");
-                Response.End();
+                Response.AddHeader("content-disposition", "attachment; filename=Reporte.xlsx");
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    excelPackage.SaveAs(memoryStream);
+                    memoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                }
             }
         }
     }
